@@ -1,0 +1,276 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-range-behavior/iron-range-behavior.html">
+<link rel="import" href="../paper-styles/color.html">
+
+<!--
+The horizontal-bar is a fork of the paper-progress element
+https://github.com/PolymerElements/paper-progress/tree/ea1cd8dc30ece12f83d0eaaebc2df4e1fa05f0b6
+It can be uses to indicate different filling levels and is intended to be used in other more complex components.
+
+Changes made to the paper-progress to create the horizontal-bar would break the intention of the paper-progress and
+therefor are not merged into the paper-progress.
+
+Example:
+    let values = [{value: 10},{value: 20}]
+    <horizontal-bar values="[[values]]"></horizontal-bar>
+
+### Styling progress bar:
+
+To change the active progress bar color:
+
+    horizontal-bar {
+       --horizontal-bar-active-color: #e91e63;
+    }
+
+To change the secondary progress bar color:
+
+    horizontal-bar {
+      --horizontal-bar-secondary-color: #f8bbd0;
+    }
+
+To change the progress bar background color:
+
+    horizontal-bar {
+      --horizontal-bar-container-color: #64ffda;
+    }
+
+Add the class `transiting` to a horizontal-bar to animate the progress bar when
+the value changed. You can also customize the transition:
+
+    horizontal-bar {
+      --horizontal-bar-transition-duration: 0.08s;
+      --horizontal-bar-transition-timing-function: ease;
+      --horizontal-bar-transition-delay: 0s;
+    }
+
+
+
+The following mixins are available for styling:
+
+Custom property                                  | Description                                 | Default
+-------------------------------------------------|---------------------------------------------|--------------
+`--horizontal-bar-container`                     | Mixin applied to container                  | `{}`
+`--horizontal-bar-transition-duration`           | Duration of the transition                  | `0.08s`
+`--horizontal-bar-transition-timing-function`    | The timing function for the transition      | `ease`
+`--horizontal-bar-transition-delay`              | delay for the transition                    | `0s`
+`--horizontal-bar-container-color`               | Color of the container                      | `--google-grey-300`
+`--horizontal-bar-active-color`                  | The color of the active bar                 | `--google-green-500`
+`--horizontal-bar-secondary-color`               | The color of the secondary bar              | `--google-green-100`
+`--horizontal-bar-disabled-active-color`         | The color of the active bar if disabled     | `--google-grey-500`
+`--horizontal-bar-disabled-secondary-color`      | The color of the secondary bar if disabled  | `--google-grey-300`
+`--horizontal-bar-height`                        | The height of the progress bar              | `4px`
+
+@group Paper Elements
+@element horizontal-bar
+@hero hero.svg
+@demo demo/index.html
+-->
+
+<dom-module id="horizontal-bar">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 200px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      :host([hidden]), [hidden] {
+        display: none !important;
+      }
+
+      #progressContainer {
+        @apply --horizontal-bar-container;
+        position: relative;
+      }
+
+      #progressContainer {
+        height: var(--horizontal-bar-height, 4px);
+      }
+
+      #progressContainer {
+        background: var(--horizontal-bar-container-color, var(--google-grey-300));
+      }
+
+      :host(.transiting) .progress-item {
+        -webkit-transition-property: -webkit-transform;
+        transition-property: transform;
+
+        /* Duration */
+        -webkit-transition-duration: var(--horizontal-bar-transition-duration, 0.08s);
+        transition-duration: var(--horizontal-bar-transition-duration, 0.08s);
+
+        /* Timing function */
+        -webkit-transition-timing-function: var(--horizontal-bar-transition-timing-function, ease);
+        transition-timing-function: var(--horizontal-bar-transition-timing-function, ease);
+
+        /* Delay */
+        -webkit-transition-delay: var(--horizontal-bar-transition-delay, 0s);
+        transition-delay: var(--horizontal-bar-transition-delay, 0s);
+      }
+
+      .progress-item {
+        @apply --layout-fit;
+        -webkit-transform-origin: left center;
+        transform-origin: left center;
+        -webkit-transform: scaleX(0);
+        transform: scaleX(0);
+        will-change: transform;
+      }
+
+      :host([disabled]) .progress-item {
+        background: var(--horizontal-bar-disabled-secondary-color, var(--google-grey-300));
+      }
+
+      .progress-item {
+        background: var(--google-yellow-500);
+      }
+
+      .progress-item..progress-item-0 {
+        background: var(--google-yellow-500);
+      }
+
+      .progress-item.progress-item-0.disabled {
+        background: var(--google-yellow-100);
+      }
+
+      .progress-item.progress-item-1 {
+        background: var(--google-red-500);
+      }
+
+      .progress-item.progress-item-1.disabled {
+        background: var(--google-red-100);
+      }
+
+      .progress-item.progress-item-2 {
+        background: var(--google-blue-500);
+      }
+
+      .progress-item.progress-item-2.disabled {
+        background: var(--google-blue-100);
+      }
+
+      .progress-item.progress-item-3 {
+        background: var(--google-green-500);
+      }
+
+      .progress-item.progress-item-3.disabled {
+        background: var(--google-green-100);
+      }
+
+      .progress-item.progress-item-4 {
+        background: var(--paper-pink-500);
+      }
+
+      .progress-item.progress-item-4.disabled {
+        background: var(--paper-pink-100);
+      }
+
+      .progress-item.progress-item-5 {
+        background: var(--paper-purple-500);
+      }
+
+      .progress-item.progress-item-5.disabled {
+        background: var(--paper-purple-100);
+      }
+
+      .progress-item.progress-item-6 {
+        background: var(--paper-indigo-500);
+      }
+
+      .progress-item.progress-item-6.disabled {
+        background: var(--paper-indigo-100);
+      }
+
+    </style>
+
+    <div id="progressContainer">
+      <dom-repeat items="[[values]]" on-rendered-item-count-changed="_domRepeat">
+        <template>
+          <div class$="progress-item progress-item-[[_calculateReversIndex(index, values)]] [[_attributeToClass(disabled, 'disabled')]]"></div>
+        </template>
+      </dom-repeat>
+    </div>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'horizontal-bar',
+
+    behaviors: [Polymer.IronRangeBehavior],
+
+    properties: {
+      values: {
+        type: Array,
+      },
+
+      /**
+       * True if the progress is disabled.
+       */
+      disabled: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+        observer: '_disabledChanged'
+      },
+
+      _domRepeatRendered: {
+        type: Boolean,
+        value: false
+      }
+    },
+
+    observers:
+      ['_progressChanged(min, max, values.*, _domRepeatRendered)'],
+
+    hostAttributes: {
+      role: 'progressbar'
+    },
+
+    _attributeToClass: function (flag, className){
+      return flag ? className : ''
+    },
+
+    _transformProgress: function (progress, ratio) {
+      let transform = 'scaleX(' + (ratio / 100) + ')'
+      progress.style.transform = progress.style.webkitTransform = transform
+    },
+
+    _calculateReversIndex (index, values) {
+      return values.length - 1 - index
+    },
+
+    _domRepeat: function () {
+      this._domRepeatRendered = true
+    },
+
+    _progressChanged: function (min, max, values, _domRepeatRendered) {
+      if (this.values && this._domRepeatRendered) {
+        this.values.forEach((item, index) => {
+          let ratio = this._calcRatio(item.value) * 100
+          this._transformProgress(this.$$(`.progress-item-${index}`), ratio)
+        })
+      }
+
+      this.setAttribute('aria-valuemin', min)
+      this.setAttribute('aria-valuemax', max)
+    },
+
+    _disabledChanged: function (disabled) {
+      this.setAttribute('aria-disabled', disabled ? 'true' : 'false')
+    },
+  })
+</script>
