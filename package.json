@@ -1,10 +1,10 @@
 {
-  "name": "@polymer/paper-progress",
+  "name": "multi-slider",
   "private": true,
-  "description": "A material design progress bar",
+  "description": "A horizontal-bar with multiple sections",
   "repository": {
     "type": "git",
-    "url": "git://github.com/PolymerElements/paper-progress.git"
+    "url": "git@github.com:sandro-k/multi-slider.git"
   },
   "license": "BSD-3-Clause",
   "devDependencies": {
