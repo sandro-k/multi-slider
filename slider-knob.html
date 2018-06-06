@@ -1,13 +1,20 @@
-<!--<link rel="import" href="../paper-progress/paper-progress.html">-->
-<!--<link rel="import" href="slider-progress.html">-->
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../iron-range-behavior/iron-range-behavior.html">
+<link rel="import" href="../paper-behaviors/paper-inky-focus-behavior.html">
+
 <!-- slider-knob is a modified version of [paper-slider, v2.0.2] -->
 
-
 <!--
-
 --single-slider-height: 2px
---slider-knob-size: 30px
+--slider-knob-color: var(--google-blue-700)
+--slider-knob-disabled-knob-color: var(--paper-grey-400)
 --slider-knob-font-color
+--slider-knob-size: 30px
+--slider-knob-start-border-color: var(--paper-grey-400)
+--slider-knob-start-color: transparent
+--slider-knob-start-color: var(--paper-grey-400)
+--slider-knob-pin-color: var(--google-blue-700)
 
 -->
 <dom-module id="slider-knob">
@@ -127,7 +134,7 @@
       }
 
       .slider-knob-inner::before {
-        background-color: var(--slider-pin-color, var(--google-blue-700));
+        background-color: var(--slider-knob-pin-color, var(--google-blue-700));
       }
 
       .pin > .slider-knob > .slider-knob-inner::before {
@@ -213,8 +220,8 @@
       <div id="sliderKnob"
            class="slider-knob"
            on-down="_knobdown"
-           on-up="_resetKnob2"
-           on-track="_onTrack2"
+           on-up="_resetKnob"
+           on-track="_onTrack"
            on-transitionend="_knobTransitionEnd">
         <div class="slider-knob-inner" value$="[[displayFunction(immediateValue)]]">
           <slot name="knob" slot="knob"></slot>
@@ -231,8 +238,8 @@
       behaviors: [
         Polymer.IronA11yKeysBehavior,
         Polymer.IronFormElementBehavior,
-        Polymer.PaperInkyFocusBehavior,
-        Polymer.IronRangeBehavior
+        Polymer.IronRangeBehavior,
+        Polymer.PaperInkyFocusBehavior
       ],
 
       properties: {
@@ -320,7 +327,6 @@
         '_updateKnob(value, min, max, snaps, step)',
         '_valueChanged(value)',
         '_immediateValueChanged(immediateValue)'
-        // '_updateMarkers(maxMarkers, min, max, snaps)'
       ],
 
       hostAttributes: {
@@ -379,13 +385,8 @@
         this._setExpand(true)
       },
 
-      _resetKnob2: function () {
-        // console.log('_resetKnob2', arguments)
-        this._resetKnob()
-      },
 
       _resetKnob: function () {
-        // console.log('_resetKnob', arguments)
         this.cancelDebouncer('expandKnob')
         this._setExpand(false)
       },
@@ -403,11 +404,6 @@
 
       _calcKnobPosition: function (ratio) {
         return (this.max - this.min) * ratio / 100 + this.min
-      },
-
-      _onTrack2: function (event) {
-        // console.log('_onTrack2', event)
-        this._onTrack(event)
       },
 
       _onTrack: function (event) {
@@ -586,13 +582,13 @@
     })
 
     /**
-     * Fired when the slider's value changes.
+     * Fired when the slider-knob's value changes.
      *
      * @event value-change
      */
 
     /**
-     * Fired when the slider's immediateValue changes. Only occurs while the
+     * Fired when the slider-knob's immediateValue changes. Only occurs while the
      * user is dragging.
      *
      * To detect changes to immediateValue that happen for any input (i.e.
@@ -603,9 +599,9 @@
      */
 
     /**
-     * Fired when the slider's value changes due to user interaction.
+     * Fired when the slider-knob's value changes due to user interaction.
      *
-     * Changes to the slider's value due to changes in an underlying
+     * Changes to the slider-knob's value due to changes in an underlying
      * bound variable will not trigger this event.
      *
      * @event change
