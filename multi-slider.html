@@ -1,0 +1,527 @@
+<!--
+@license
+Copyright (C) 2016, Iftach Sadeh <iftach.sadeh@desy.de>
+The MIT License (MIT)
+See the file LICENSE.txt for further details.
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../iron-range-behavior/iron-range-behavior.html">
+<link rel="import" href="../paper-behaviors/paper-inky-focus-behavior.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-progress/paper-progress.html">
+<link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="../paper-styles/shadow.html">
+<link rel="import" href="slider-knob.html">
+
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+
+<!--
+# multi-slider
+
+`multi-slider` allows user to select a range of values within a given
+(possibly wider) range, by moving the position of two knobs, or by moving the
+position of the distance spanned between the two knobs.
+
+## Examples:
+
+Basic use:
+```html
+<multi-slider></multi-slider>
+```
+
+See README.md for further details.
+
+@element multi-slider
+@demo demo/index.html
+-->
+
+<dom-module id="multi-slider">
+  <template>
+    <style>
+      /* local styles go here */
+      :host {
+        @apply --layout;
+        @apply --layout-justified;
+        @apply --layout-center;
+
+        --paper-range-slider-width: 200px;
+
+        /*--paper-range-slider-lower-color: var(--paper-grey-400);*/
+        /*--paper-range-slider-active-color: var(--primary-color);*/
+        /*--paper-range-slider-higher-color: var(--paper-grey-400);*/
+        /*--paper-range-slider-knob-color: var(--primary-color);*/
+        /*--paper-range-slider-pin-color: var(--primary-color);*/
+        /*--paper-range-slider-pin-start-color: var(--paper-grey-400);*/
+        /*--paper-range-slider-knob-start-color: transparent;*/
+        /*--paper-range-slider-knob-start-border-color: var(--paper-grey-400);*/
+
+        /*height: calc(30px + var(--paper-single-range-slider-height, 2px));*/
+        height: calc(30px + var(--single-slider-height, 2px) );
+        margin-top: 1em;
+        position: relative;
+      }
+
+      slider-knob {
+        @apply --layout-fit;
+        width: 100%;
+        pointer-events: none;
+        /*--paper-single-range-slider-height: 12px;*/
+        /*--paper-single-range-slider-height: var(--paper-single-range-slider-height, 12px);*/
+        --paper-single-range-slider-active-color: transparent;
+        --paper-single-range-slider-container-color: transparent;
+
+        --paper-slider-height: 6px;
+        /*--single-slider-height: 6px;*/
+        --slider-knob-size: 40px;
+      }
+
+      .knob-content {
+        @apply --layout-fit;
+        @apply --layout;
+        @apply --layout-center-center;
+
+        /*@apply --shadow-elevation-4dp;*/
+      }
+
+      slider-knob.slider-knob-0 {
+        --slider-knob-color: var(--google-yellow-500);
+        --slider-knob-start-color: var(--google-yellow-500);
+        --slider-knob-start-border-color: var(--google-yellow-500);
+
+        --slider-knob-disabled-knob-color: var(--google-yellow-100);
+        /*--paper-single-range-slider-disabled-active-color: var(--google-yellow-100);*/
+        /*--paper-single-range-slider-disabled-active-color: magenta;*/
+
+        --slider-pin-color: var(--google-yellow-500);
+      }
+
+      slider-knob.slider-knob-1 {
+        --slider-knob-color: var(--google-red-500);
+        --slider-knob-start-border-color: var(--google-red-500);
+        --slider-pin-color: var(--google-red-500);
+
+        --slider-knob-disabled-knob-color: var(--google-red-100);
+      }
+
+      slider-knob.slider-knob-2 {
+        --slider-knob-color: var(--google-blue-500);
+        --slider-knob-start-border-color: var(--google-blue-500);
+        --slider-pin-color: var(--google-blue-500);
+
+        --slider-knob-disabled-knob-color: var(--google-blue-100);
+      }
+
+      horizontal-bar {
+        width: auto;
+        /*--horizontal-bar-height: 10px;*/
+        --horizontal-bar-height: var(--single-slider-height, 2px);
+        margin-left: calc(15px + var(--single-slider-height, 2px) / 2);
+        margin-right: calc(15px + var(--single-slider-height, 2px) / 2);
+        /*margin-left: calc(15px + 10px / 2);*/
+        /*margin-right: calc(15px + 10px / 2);*/
+        /*margin-left: calc(15px + var(--paper-single-range-slider-height) / 2);*/
+        /*margin-right: calc(15px + var(--paper-single-range-slider-height) / 2);*/
+
+        justify-content: center;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        align-content: center;
+        @apply --layout-fit;
+      }
+    </style>
+
+    <horizontal-bar disabled="[[disabled]]" id="multiValue" values="[[values]]" class="transiting"></horizontal-bar>
+
+    <dom-repeat id="slider" items="[[values]]">
+      <template>
+        <slider-knob
+          display-function="[[displayFunction]]"
+          disabled$="[[disabled]]"
+
+          on-immediate-value-change="_immediateValueChange"
+          on-change="_sliderChange"
+
+          step="[[step]]"
+          min="[[min]]"
+          max="[[max]]"
+
+          pin="[[pin]]"
+          snaps="[[snaps]]"
+
+          value="[[item.value]]"
+          class$="slider-knob-[[index]]">
+          <div class="knob-content" slot="knob">
+            <iron-icon icon="add"></iron-icon>
+          </div>
+        </slider-knob>
+      </template>
+    </dom-repeat>
+
+
+  </template>
+
+  <script>
+    class MultiSlider extends Polymer.GestureEventListeners(Polymer.Element) {
+      static get is () { return 'multi-slider' }
+
+      // -----------------------------------------------------------------------------------------------------------
+      // properties
+      // -----------------------------------------------------------------------------------------------------------
+      static get properties () {
+        return {
+          /**
+           * Used to customize the displayed value of the pin. E.g. the value can be prefixed with a '$' like '$99'
+           */
+          displayFunction: {
+            type: Function,
+            value: function () {
+              return function (value) {
+                return value
+              }
+            }
+          },
+
+          /**
+           * the minimal value (lower range) of the slider.
+           */
+          min: {
+            type: Number,
+            value: 0,
+            notify: true,
+            reflectToAttribute: true
+          },
+
+          /**
+           * the maximal value (upper range) of the slider.
+           */
+          max: {
+            type: Number,
+            value: 100,
+            notify: true,
+            reflectToAttribute: true
+          },
+
+          /**
+           * the current value of the lower range of the slider.
+           */
+          valueMin: {
+            type: Number,
+            value: 0,
+            notify: true,
+            reflectToAttribute: true
+          },
+
+          /**
+           * the current value of the upper range of the slider.
+           */
+          valueMax: {
+            type: Number,
+            value: 100,
+            notify: true,
+            reflectToAttribute: true
+          },
+
+          /**
+           * the minimal step-change of a knob on the slider
+           */
+          step: {
+            type: Number,
+            value: 1,
+            notify: true,
+            reflectToAttribute: true
+          },
+
+          /**
+           * optional minimal value for the difference between valueMin and valueMax
+           * by default this is negative (valueDiffMin is ignored)
+           */
+          valueDiffMin: {
+            type: Number,
+            value: 0,
+            notify: true,
+            reflectToAttribute: true
+          },
+
+          /**
+           * optional maximal value for the difference between valueMin and valueMax
+           * by default this is negative (valueDiffMax is ignored)
+           */
+          valueDiffMax: {
+            type: Number,
+            value: 0,
+            notify: true,
+            reflectToAttribute: true
+          },
+
+          /**
+           * if true, pins with numeric value label are shown when the slider thumb
+           * is pressed. Use for settings for which users need to know the exact
+           * value of the setting.
+           */
+          alwaysShowPin: {
+            type: Boolean,
+            value: false,
+            notify: true
+          },
+
+          /**
+           * if true, pins with numeric value label are shown when the slider thumb
+           * is pressed. Use for settings for which users need to know the exact
+           * value of the setting.
+           */
+          pin: {
+            type: Boolean,
+            value: false,
+            notify: true
+          },
+
+          /**
+           * if true, the slider thumb snaps to tick marks evenly spaced based
+           * on the `step` property value.
+           */
+          snaps: {
+            type: Boolean,
+            value: false,
+            notify: true
+          },
+
+          /**
+           * if true, the slider is disabled.
+           */
+          disabled: {
+            type: Boolean,
+            value: false,
+            notify: true
+          },
+
+          /**
+           * time-window (in msec) to keep the slider._setTransiting(true) for the
+           * two paper-single-range-slider elements, when using the setValues() method to change the
+           * selected range. This should be slightly higher than the transition time defined for the
+           * paper-single-range-slider (which, as of paper-single-range-slider-v1.0.11, is 0.08s/0.18s).
+           */
+          transDuration: {
+            type: Number,
+            value: 250,
+          },
+
+          values: {
+            type: Array,
+            value: function () {
+              return [
+                {value: 10},
+                {value: 20},
+                {value: 70}
+              ]
+            }
+          }
+        }
+      }
+
+      // -----------------------------------------------------------------------------------------------------------
+      // Multi range slider
+      // -----------------------------------------------------------------------------------------------------------
+
+      // -----------------------------------------------------------------------------------------------------------
+      // Multi range slider
+      // -----------------------------------------------------------------------------------------------------------
+
+      // -----------------------------------------------------------------------------------------------------------
+      // initial settings
+      // -----------------------------------------------------------------------------------------------------------
+      ready () {
+        super.ready()
+        requestAnimationFrame(() => {
+          this.init()
+        })
+      }
+
+      _indexHasLeftSlider (index) {
+        return index > 0
+      }
+
+      _indexHasRightSlider (index) {
+        return index < this.values.length - 1
+      }
+
+      _checkForValueDiffMin (value, minValue) {
+        return (value - minValue) < this._valueDiffMin
+      }
+
+      _getPreviousSliderValue (index) {
+        return this.get(`values.${index - 1}.value`)
+      }
+
+      _getNextSliderValue (index) {
+        return this.get(`values.${index + 1}.value`)
+      }
+
+      _setPreviousSliderValue (index, value) {
+        // calling _setValueForIndex recursively to honor every next and previous index
+        return this._setValueForIndex(index - 1, value)
+      }
+
+      _setNextSliderValue (index, value) {
+        // calling _setValueForIndex recursively to honor every next and previous index
+        return this._setValueForIndex(index + 1, value)
+      }
+
+      _getValidValueToSet (value, previousValue, nextValue) {
+        value = Math.max(this.min, value)
+        value = Math.min(this.max, value)
+        if (previousValue !== undefined) {
+          value = Math.max(previousValue + this._valueDiffMin, value)
+        }
+        if (nextValue !== undefined) {
+          value = Math.min(nextValue - this._valueDiffMin, value)
+        }
+        return value
+      }
+
+      _setSliderValue (index, value) {
+        this.set(`values.${index}.value`, value)
+      }
+
+      _setValueForIndex (index, value) {
+        let previousValue, nextValue
+
+        if (this._indexHasLeftSlider(index)) {
+          let prevSliderValue = this._getPreviousSliderValue(index)
+          if (this._checkForValueDiffMin(value, prevSliderValue) && this._getPreviousSliderValue(index) > this.min) {
+            this._setPreviousSliderValue(index, this._getValidValueToSet(value - this._valueDiffMin))
+          }
+        }
+
+        if (this._indexHasRightSlider(index)) {
+          let nextSliderValue = this._getNextSliderValue(index)
+          if (this._checkForValueDiffMin(nextSliderValue, value) && this._getNextSliderValue(index) < this.max) {
+            this._setNextSliderValue(index, this._getValidValueToSet(value + this._valueDiffMin))
+          }
+        }
+
+        previousValue = this._getPreviousSliderValue(index)
+        nextValue = this._getNextSliderValue(index)
+
+        value = this._getValidValueToSet(value, previousValue, nextValue)
+        this._setSliderValue(index, value)
+        return value
+      }
+
+      _sliderChange (event) {
+        let index = this.$.slider.indexForElement(event.target)
+        let value = this._setValueForIndex(index, event.target.immediateValue)
+
+        // set the value within the range back to the slider
+        event.target.set('value', value)
+
+        if (this.alwaysShowPin) {
+          event.target._expandKnob()
+        }
+      }
+
+      _immediateValueChange (event) {
+        this._setValueForIndex(this.$.slider.indexForElement(event.target), event.target.immediateValue)
+      }
+
+      /**
+       * initialize basic properties (can be called again by the user)
+       * @method init
+       */
+      init () {
+        this.setDisabled(this.disabled)
+
+        // some basic properties
+        if (this.alwaysShowPin) { this.pin = true }
+
+        this._setValueDiff()
+
+        // activate the pins, and never hide
+        if (this.alwaysShowPin) {
+          this._expandKnowForAll()
+        }
+      }
+
+      _expandKnowForAll () {
+        this.getAllSlider().forEach((el) => {
+          el._expandKnob()
+        })
+      }
+
+      // internal variables for minimal/maximal difference between this.valueMin, this.valueMax
+      // each one is between zero and the maximal difference available in the range, and
+      // the this._valueDiffMin can not be larger than this._valueDiffMax
+      _setValueDiff () {
+        this._valueDiffMax = Math.max(this.valueDiffMax, 0)
+        this._valueDiffMin = Math.max(this.valueDiffMin, 0)
+      }
+
+      // helper function to cast to a boolean
+      _toBool (valIn) { return (valIn === 'false' || valIn === '0') ? false : Boolean(valIn) }
+
+      /**
+       * set the minimal step-change of a knob on the slider
+       * @method setMax
+       */
+      setStep (stepIn) {
+        this.step = stepIn
+      }
+
+      /**
+       * set the minimal difference between selected values
+       * @method setValueDiffMin
+       */
+      setValueDiffMin (valueDiffMin) {
+        this._valueDiffMin = valueDiffMin
+      }
+
+      /**
+       * set the maximal difference between selected values
+       * @method setValueDiffMax
+       */
+      setValueDiffMax (valueDiffMax) {
+        this._valueDiffMax = valueDiffMax
+      }
+
+      /**
+       * set the tapValueMove property
+       * @method setValueDiffMax
+       */
+      setTapValueMove (isTapValueMove) {
+        this.tapValueMove = this._toBool(isTapValueMove)
+      }
+
+      getAllSlider () {
+        return Array.from(this.shadowRoot.querySelectorAll('slider-knob'))
+      }
+
+      /**
+       * set the disabled parameter
+       * @method setValueDiffMax
+       */
+      setDisabled (isDisabled) {
+        this.disabled = this._toBool(isDisabled)
+        let pointEvt = this.disabled ? 'none' : 'auto'
+
+        // console.log('setDisabled', this.$.slider)
+
+        this.getAllSlider().forEach((el) => {
+          el.getEle('#sliderKnob').style.pointerEvents = pointEvt
+        })
+      }
+    }
+
+    customElements.define(MultiSlider.is, MultiSlider)
+  </script>
+</dom-module>
+
+
+
+
+
+
