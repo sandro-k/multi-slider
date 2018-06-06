@@ -339,8 +339,8 @@
 
       ready () {
         super.ready()
-        this._ensureAttribute('tabindex', 0);
-        this._ensureAttribute('role', 'slider');
+        this._ensureAttribute('tabindex', 0)
+        this._ensureAttribute('role', 'slider')
       }
 
       /**
@@ -396,7 +396,7 @@
         this._setImmediateValue(this._calcStep(this._calcKnobPosition(ratio)))
         this._setRatio(this._calcRatio(this.immediateValue) * 100)
 
-        this.$.sliderKnob.style.left = this.ratio + '%'
+        this.$.sliderKnob.style.left = `${this.ratio}%`
         if (this.dragging) {
           this._knobstartx = (this.ratio * this._w) / 100
           this.translate3d(0, 0, 0, this.$.sliderKnob)
@@ -439,21 +439,21 @@
           this._trackStart(event)
         }
 
-        var direction = this._isRTL ? -1 : 1
-        var dx = Math.min(
+        let direction = this._isRTL ? -1 : 1
+        let dx = Math.min(
           this._maxx, Math.max(this._minx, event.detail.dx * direction))
         this._x = this._startx + dx
 
-        var immediateValue = this._calcStep(this._calcKnobPosition(this._x / this._w * 100))
+        let immediateValue = this._calcStep(this._calcKnobPosition(this._x / this._w * 100))
         this._setImmediateValue(immediateValue)
 
         // update knob's position
-        var translateX = ((this._calcRatio(this.immediateValue) * this._w) - this._knobstartx)
+        let translateX = ((this._calcRatio(this.immediateValue) * this._w) - this._knobstartx)
         this.translate3d(translateX + 'px', 0, 0, this.$.sliderKnob)
       }
 
       _trackEnd () {
-        var s = this.$.sliderKnob.style
+        let s = this.$.sliderKnob.style
 
         this.$.sliderKnob.classList.remove('dragging')
         this._setDragging(false)
