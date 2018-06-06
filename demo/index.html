@@ -10,7 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <!doctype html>
 <html>
 <head>
-  <title>paper-progress demo</title>
+  <title>horizontal-bar demo</title>
 
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -20,113 +20,112 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <link rel="import" href="../../paper-styles/color.html">
   <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
   <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-  <link rel="import" href="../paper-progress.html">
-  <link rel="import" href="../../paper-button/paper-button.html">
+
+
+  <link rel="import" href="../horizontal-bar.html">
+  <link rel="import" href="../paper-slider.html">
+  <link rel="import" href="../multi-slider.html">
 
   <custom-style>
     <style is="custom-style" include="demo-pages-shared-styles">
-      paper-progress {
+      horizontal-bar {
         display: block;
         width: 100%;
         margin: 20px 0;
       }
+
       paper-button {
         display: inline-block;
         padding: 5px;
+      }
+
+      paper-slider, paper-slider2 {
+        width: 100%;
       }
     </style>
   </custom-style>
 
 </head>
 <body unresolved>
-  <div class="vertical-section-container centered">
-    <h3>paper-progress can be imperatively controlled</h3>
-    <demo-snippet class="centered-demo">
-      <template>
-        <p>Once started, loops 5 times before stopping.
-          <!-- View the source code to see the contents of startProgress() -->
-          <paper-button raised onclick="startProgress();" id="start">Start</paper-button>
-        </p>
-        <paper-progress id="progress"></paper-progress>
-      </template>
-    </demo-snippet>
+<div class="vertical-section-container centered">
 
-    <h3>paper-progress can be indeterminate with a custom duration</h3>
-    <demo-snippet class="centered-demo">
-      <template>
-        <custom-style>
-          <style is="custom-style">
-            paper-progress.slow {
-              --paper-progress-indeterminate-cycle-duration: 20s;
-            }
-          </style>
-        </custom-style>
-        <paper-progress indeterminate></paper-progress>
-        <paper-progress indeterminate class="slow"></paper-progress>
-      </template>
-    </demo-snippet>
+  <h3>It can be styled using custom properties</h3>
+  <demo-snippet class="centered-demo">
+    <template>
+      <custom-style>
+        <style is="custom-style">
+          horizontal-bar.blue {
+            --horizontal-bar-active-color: var(--paper-light-blue-500);
+            --horizontal-bar-secondary-color: red;
+          }
 
-    <h3>It can be styled using custom properties</h3>
-    <demo-snippet class="centered-demo">
-      <template>
-        <custom-style>
-          <style is="custom-style">
-            paper-progress.blue {
-              --paper-progress-active-color: var(--paper-light-blue-500);
-              --paper-progress-secondary-color: var(--paper-light-blue-100);
-            }
+          horizontal-bar.red {
+            --horizontal-bar-active-color: var(--paper-red-500);
+            --horizontal-bar-secondary-color: var(--paper-red-100);
+          }
 
-            paper-progress.red {
-              --paper-progress-active-color: var(--paper-red-500);
-              --paper-progress-secondary-color: var(--paper-red-100);
-            }
+          horizontal-bar.green {
+            --horizontal-bar-active-color: var(--paper-light-green-500);
+            --horizontal-bar-secondary-color: var(--paper-light-green-100);
+          }
 
-            paper-progress.green {
-              --paper-progress-active-color: var(--paper-light-green-500);
-              --paper-progress-secondary-color: var(--paper-light-green-100);
-            }
-          </style>
-        </custom-style>
-        <paper-progress value="800" min="100" max="1000" class="red"></paper-progress>
-        <paper-progress value="60" class="green"></paper-progress>
-        <paper-progress value="40" secondary-progress="80" class="blue"></paper-progress>
-      </template>
-    </demo-snippet>
-  </div>
+          horizontal-bar {
+            --horizontal-bar-height: 10px;
+          }
 
-  <script>
-    var progress, button;
-    var repeat, maxRepeat = 5, animating = false;
+          multi-slider.huge {
+            /*background: red;*/
+            --single-slider-height: 20px;
+          }
 
-    function nextProgress() {
-      animating = true;
-      if (progress.value < progress.max) {
-        progress.value += (progress.step || 1);
-      } else {
-        if (++repeat >= maxRepeat) {
-          animating = false;
-          button.disabled = false;
-          return;
-        }
-        progress.value = progress.min;
-      }
-      requestAnimationFrame(nextProgress);
-    }
+          multi-slider {
+            /*width: 100%;*/
+            background: lightcyan;
+            --single-slider-height: 14px;
+            --single-slider-height: 7px;
+            --paper-range-slider-width: 100%
+          }
 
-    function startProgress() {
-      repeat = 0;
-      progress.value = progress.min;
-      button.disabled = true;
-      if (!animating) {
-        nextProgress();
-      }
-    }
+        </style>
+      </custom-style>
 
-    window.addEventListener('WebComponentsReady', function() {
-      progress = document.querySelector('paper-progress');
-      button = document.querySelector('paper-button');
-    });
-  </script>
+
+      <h1>horizontal-bar</h1>
+      <horizontal-bar id="multiValue" class="transiting"></horizontal-bar>
+
+
+      <h1>multi-slider</h1>
+      <!--<paper-range-slider2 tap-value-reduce step="1" value-min="10" value-max="70" max="100" min="0"></paper-range-slider2>-->
+      <multi-slider always-show-pin value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+      <multi-slider pin value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+      <multi-slider value-diff-min="0" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+      <multi-slider class="huge" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+
+      <multi-slider always-show-pin snaps step="5" max-markers="20" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+      <multi-slider always-show-pin step="5" max-markers="20" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+      <multi-slider disabled value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+
+
+    </template>
+  </demo-snippet>
+</div>
+
+<script>
+  let multiValueProgress, multiValueProgress2
+
+  window.addEventListener('WebComponentsReady', () => {
+    multiValueProgress = document.querySelector('#multiValue')
+    multiValueProgress.values = [
+      {value: 10},
+      {value: 20},
+      {value: 30},
+      {value: 40},
+      {value: 50},
+      {value: 60},
+      {value: 70}
+    ]
+  })
+</script>
 
 </body>
 </html>
