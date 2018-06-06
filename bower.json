@@ -3,7 +3,10 @@
   "version": "2.1.2",
   "license": "http://polymer.github.io/LICENSE.txt",
   "description": "A multi-slider element with 1..n Slider",
-  "authors": ["The Polymer Authors", "Sandro Kock <sandro.kock@gmail.com>"],
+  "authors": [
+    "The Polymer Authors",
+    "Sandro Kock <sandro.kock@gmail.com>"
+  ],
   "keywords": [
     "web-components",
     "polymer",
@@ -16,17 +19,17 @@
     "url": "https://github.com/sandro-k/multi-slider"
   },
   "dependencies": {
-    "iron-flex-layout": "PolymerElements/iron-flex-layout#1 - 2",
-    "iron-range-behavior": "PolymerElements/iron-range-behavior#1 - 2",
-    "paper-styles": "PolymerElements/paper-styles#1 - 2",
-    "polymer": "Polymer/polymer#1.9 - 2"
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#v2.0.3",
+    "iron-range-behavior": "PolymerElements/iron-range-behavior#v2.1.1",
+    "paper-styles": "PolymerElements/paper-styles#v2.1.0",
+    "polymer": "Polymer/polymer#v2.6.0"
   },
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#1 - 2",
-    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#1 - 2",
-    "paper-button": "PolymerElements/paper-button#1 - 2",
-    "web-component-tester": "^6.0.0",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+    "iron-component-page": "PolymerElements/iron-component-page#v2.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#v2.1.1",
+    "paper-button": "PolymerElements/paper-button#v2.1.1",
+    "web-component-tester": "Polymer/web-component-tester#v6.6.0-pre.5",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#v1.1.0"
   },
   "ignore": [],
   "resolutions": {
