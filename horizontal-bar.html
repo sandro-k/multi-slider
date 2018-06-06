@@ -199,7 +199,8 @@ Custom property                                  | Description                  
     <div id="progressContainer">
       <dom-repeat items="[[values]]" on-rendered-item-count-changed="_domRepeat">
         <template>
-          <div class$="progress-item progress-item-[[_calculateReversIndex(index, values)]] [[_attributeToClass(disabled, 'disabled')]]"></div>
+          <div
+            class$="progress-item progress-item-[[_calculateReversIndex(index, values)]] [[_attributeToClass(disabled, 'disabled')]]"></div>
         </template>
       </dom-repeat>
     </div>
@@ -207,57 +208,62 @@ Custom property                                  | Description                  
 </dom-module>
 
 <script>
-  Polymer({
-    is: 'horizontal-bar',
+  class HorizontalBar extends Polymer.mixinBehaviors([Polymer.IronRangeBehavior],  Polymer.Element) {
+    static get is () {
+      return 'horizontal-bar'
+    }
 
-    behaviors: [Polymer.IronRangeBehavior],
+    static get properties () {
+      return {
+        values: {
+          type: Array,
+        },
 
-    properties: {
-      values: {
-        type: Array,
-      },
+        /**
+         * True if the progress is disabled.
+         */
+        disabled: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true,
+          observer: '_disabledChanged'
+        },
 
-      /**
-       * True if the progress is disabled.
-       */
-      disabled: {
-        type: Boolean,
-        value: false,
-        reflectToAttribute: true,
-        observer: '_disabledChanged'
-      },
-
-      _domRepeatRendered: {
-        type: Boolean,
-        value: false
+        _domRepeatRendered: {
+          type: Boolean,
+          value: false
+        }
       }
-    },
+    }
 
-    observers:
-      ['_progressChanged(min, max, values.*, _domRepeatRendered)'],
+    static get observers () {
+      return ['_progressChanged(min, max, values.*, _domRepeatRendered)']
+    }
 
-    hostAttributes: {
-      role: 'progressbar'
-    },
+    static get hostAttributes () {
+      return {
+        role: 'progressbar'
+      }
+    }
 
-    _attributeToClass: function (flag, className){
+    _attributeToClass (flag, className) {
       return flag ? className : ''
-    },
+    }
 
-    _transformProgress: function (progress, ratio) {
+    _transformProgress (progress, ratio) {
       let transform = 'scaleX(' + (ratio / 100) + ')'
       progress.style.transform = progress.style.webkitTransform = transform
-    },
+    }
 
     _calculateReversIndex (index, values) {
       return values.length - 1 - index
-    },
+    }
 
-    _domRepeat: function () {
+    _domRepeat () {
       this._domRepeatRendered = true
-    },
+    }
 
-    _progressChanged: function (min, max, values, _domRepeatRendered) {
+    _progressChanged (min, max, values, _domRepeatRendered) {
       if (this.values && this._domRepeatRendered) {
         this.values.forEach((item, index) => {
           let ratio = this._calcRatio(item.value) * 100
@@ -267,10 +273,12 @@ Custom property                                  | Description                  
 
       this.setAttribute('aria-valuemin', min)
       this.setAttribute('aria-valuemax', max)
-    },
+    }
 
-    _disabledChanged: function (disabled) {
+    _disabledChanged (disabled) {
       this.setAttribute('aria-disabled', disabled ? 'true' : 'false')
-    },
-  })
+    }
+  }
+
+  customElements.define(HorizontalBar.is, HorizontalBar)
 </script>
