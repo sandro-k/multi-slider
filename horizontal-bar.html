@@ -104,7 +104,7 @@ Custom property                                  | Description                  
         background: var(--horizontal-bar-container-color, var(--google-grey-300));
       }
 
-      :host(.transiting) .progress-item {
+      :host(.transiting) .bar-item {
         -webkit-transition-property: -webkit-transform;
         transition-property: transform;
 
@@ -121,7 +121,7 @@ Custom property                                  | Description                  
         transition-delay: var(--horizontal-bar-transition-delay, 0s);
       }
 
-      .progress-item {
+      .bar-item {
         @apply --layout-fit;
         -webkit-transform-origin: left center;
         transform-origin: left center;
@@ -130,67 +130,67 @@ Custom property                                  | Description                  
         will-change: transform;
       }
 
-      :host([disabled]) .progress-item {
+      :host([disabled]) .bar-item {
         background: var(--horizontal-bar-disabled-secondary-color, var(--google-grey-300));
       }
 
-      .progress-item {
+      .bar-item {
         background: var(--google-yellow-500);
       }
 
-      .progress-item..progress-item-0 {
+      .bar-item..bar-item-0 {
         background: var(--google-yellow-500);
       }
 
-      .progress-item.progress-item-0.disabled {
+      .bar-item.bar-item-0.disabled {
         background: var(--google-yellow-100);
       }
 
-      .progress-item.progress-item-1 {
+      .bar-item.bar-item-1 {
         background: var(--google-red-500);
       }
 
-      .progress-item.progress-item-1.disabled {
+      .bar-item.bar-item-1.disabled {
         background: var(--google-red-100);
       }
 
-      .progress-item.progress-item-2 {
+      .bar-item.bar-item-2 {
         background: var(--google-blue-500);
       }
 
-      .progress-item.progress-item-2.disabled {
+      .bar-item.bar-item-2.disabled {
         background: var(--google-blue-100);
       }
 
-      .progress-item.progress-item-3 {
+      .bar-item.bar-item-3 {
         background: var(--google-green-500);
       }
 
-      .progress-item.progress-item-3.disabled {
+      .bar-item.bar-item-3.disabled {
         background: var(--google-green-100);
       }
 
-      .progress-item.progress-item-4 {
+      .bar-item.bar-item-4 {
         background: var(--paper-pink-500);
       }
 
-      .progress-item.progress-item-4.disabled {
+      .bar-item.bar-item-4.disabled {
         background: var(--paper-pink-100);
       }
 
-      .progress-item.progress-item-5 {
+      .bar-item.bar-item-5 {
         background: var(--paper-purple-500);
       }
 
-      .progress-item.progress-item-5.disabled {
+      .bar-item.bar-item-5.disabled {
         background: var(--paper-purple-100);
       }
 
-      .progress-item.progress-item-6 {
+      .bar-item.bar-item-6 {
         background: var(--paper-indigo-500);
       }
 
-      .progress-item.progress-item-6.disabled {
+      .bar-item.bar-item-6.disabled {
         background: var(--paper-indigo-100);
       }
 
@@ -200,7 +200,7 @@ Custom property                                  | Description                  
       <dom-repeat items="[[values]]" on-rendered-item-count-changed="_domRepeat">
         <template>
           <div
-            class$="progress-item progress-item-[[_calculateReversIndex(index, values)]] [[_attributeToClass(disabled, 'disabled')]]"></div>
+            class$="bar-item bar-item-[[_calculateReversIndex(index, values)]] [[_attributeToClass(disabled, 'disabled')]]"></div>
         </template>
       </dom-repeat>
     </div>
@@ -251,7 +251,8 @@ Custom property                                  | Description                  
     }
 
     _transformProgress (progress, ratio) {
-      let transform = 'scaleX(' + (ratio / 100) + ')'
+      let transform = `scaleX(${ratio/ 100})`
+      // console.log('_transformProgress', transform, transform2)
       progress.style.transform = progress.style.webkitTransform = transform
     }
 
@@ -267,7 +268,7 @@ Custom property                                  | Description                  
       if (this.values && this._domRepeatRendered) {
         this.values.forEach((item, index) => {
           let ratio = this._calcRatio(item.value) * 100
-          this._transformProgress(this.$$(`.progress-item-${index}`), ratio)
+          this._transformProgress(this.$$(`.bar-item-${index}`), ratio)
         })
       }
 
