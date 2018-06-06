@@ -449,7 +449,7 @@
 
         // update knob's position
         let translateX = ((this._calcRatio(this.immediateValue) * this._w) - this._knobstartx)
-        this.translate3d(translateX + 'px', 0, 0, this.$.sliderKnob)
+        this.translate3d(`${translateX}px`, 0, 0, this.$.sliderKnob)
       }
 
       _trackEnd () {
@@ -466,7 +466,6 @@
       }
 
       _knobdown (event) {
-        console.log('_knobdown', arguments)
         this._expandKnob()
 
         // cancel selection
@@ -509,7 +508,6 @@
       }
 
       _leftKey (event) {
-        console.log('_leftKey', arguments)
         if (this._isRTL)
           this._incrementKey(event)
         else
@@ -517,7 +515,6 @@
       }
 
       _rightKey (event) {
-        console.log('_rightKey', arguments)
         if (this._isRTL)
           this._decrementKey(event)
         else
