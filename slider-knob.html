@@ -55,12 +55,13 @@
         outline: 0;
       }
 
-      .bar-container {
+      #sliderBar.bar-container {
         position: absolute;
         top: 0;
         bottom: 0;
         left: 0;
         right: 0;
+        width: 100%;
       }
 
       .ring > .bar-container {
@@ -76,7 +77,7 @@
         left: calc(8px + var(--calculated-slider-knob-height) / 2);
       }
 
-      .slider-knob {
+      .slider-knob-btn {
         position: absolute;
         left: 0;
         top: 0;
@@ -86,20 +87,20 @@
         height: calc(var(--calculated-slider-knob-size) + var(--calculated-slider-knob-height));
       }
 
-      .transiting > .slider-knob {
+      .transiting > .slider-knob-btn {
         transition: left 0.08s ease;
       }
 
-      .slider-knob:focus {
+      .slider-knob-btn:focus {
         outline: none;
       }
 
-      .slider-knob.dragging {
+      .slider-knob-btn.dragging {
         transition: none;
         cursor: col-resize;
       }
 
-      .snaps > .slider-knob.dragging {
+      .snaps > .slider-knob-btn.dragging {
         transition: -webkit-transform 0.08s ease;
         transition: transform 0.08s ease;
       }
@@ -123,12 +124,12 @@
         @apply --shadow-elevation-4dp;
       }
 
-      .expand:not(.pin) > .slider-knob > .slider-knob-inner {
+      .expand:not(.pin) > .slider-knob-btn > .slider-knob-inner {
         -webkit-transform: scale(1.5);
         transform: scale(1.5);
       }
 
-      .ring > .slider-knob > .slider-knob-inner {
+      .ring > .slider-knob-btn > .slider-knob-inner {
         background-color: var(--slider-knob-start-color, transparent);
         border: 2px solid var(--slider-knob-start-border-color, var(--paper-grey-400));
       }
@@ -137,7 +138,7 @@
         background-color: var(--slider-knob-pin-color, var(--google-blue-700));
       }
 
-      .pin > .slider-knob > .slider-knob-inner::before {
+      .pin > .slider-knob-btn > .slider-knob-inner::before {
         content: "";
         position: absolute;
         top: 0;
@@ -157,16 +158,16 @@
         transition: transform .18s ease, background-color .18s ease;
       }
 
-      .pin.ring > .slider-knob > .slider-knob-inner::before {
+      .pin.ring > .slider-knob-btn > .slider-knob-inner::before {
         background-color: var(--slider-knob-pin-start-color, var(--paper-grey-400));
       }
 
-      .pin.expand > .slider-knob > .slider-knob-inner::before {
+      .pin.expand > .slider-knob-btn > .slider-knob-inner::before {
         -webkit-transform: rotate(-45deg) scale(1) translate(17px, -17px);
         transform: rotate(-45deg) scale(1) translate(17px, -17px);
       }
 
-      .pin > .slider-knob > .slider-knob-inner::after {
+      .pin > .slider-knob-btn > .slider-knob-inner::after {
         content: attr(value);
         position: absolute;
         top: 0;
@@ -183,7 +184,7 @@
         @apply --slider-knob-inner-text;
       }
 
-      .pin.expand > .slider-knob > .slider-knob-inner::after {
+      .pin.expand > .slider-knob-btn > .slider-knob-inner::after {
         -webkit-transform: scale(1) translate(0, -17px);
         transform: scale(1) translate(0, -17px);
       }
@@ -193,14 +194,14 @@
         pointer-events: none;
       }
 
-      .disabled > .slider-knob > .slider-knob-inner {
+      .disabled > .slider-knob-btn > .slider-knob-inner {
         background-color: var(--slider-knob-disabled-knob-color, var(--paper-grey-400));
         border: 2px solid var(--slider-knob-disabled-knob-color, var(--paper-grey-400));
         -webkit-transform: scale3d(0.75, 0.75, 1);
         transform: scale3d(0.75, 0.75, 1);
       }
 
-      .disabled.ring > .slider-knob > .slider-knob-inner {
+      .disabled.ring > .slider-knob-btn > .slider-knob-inner {
         background-color: var(--slider-knob-start-color, transparent);
         border: 2px solid var(--slider-knob-start-border-color, var(--paper-grey-400));
       }
@@ -212,13 +213,12 @@
 
     <div id="sliderContainer"
          class$="[[_getClassNames(disabled, pin, snaps, immediateValue, min, expand, dragging, transiting)]]">
-      <div
-        class="bar-container"
-        id="sliderBar">
+
+      <div id="sliderBar" class="bar-container">
       </div>
 
       <div id="sliderKnob"
-           class="slider-knob"
+           class="slider-knob-btn"
            on-down="_knobdown"
            on-up="_resetKnob"
            on-track="_onTrack"
@@ -439,9 +439,11 @@
           this._trackStart(event)
         }
 
+
         let direction = this._isRTL ? -1 : 1
         let dx = Math.min(
           this._maxx, Math.max(this._minx, event.detail.dx * direction))
+
         this._x = this._startx + dx
 
         let immediateValue = this._calcStep(this._calcKnobPosition(this._x / this._w * 100))
