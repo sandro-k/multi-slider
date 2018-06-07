@@ -16,7 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
 
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../webcomponentsjs/webcomponents-loader.js"></script>
   <link rel="import" href="../../paper-styles/color.html">
   <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
   <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
@@ -41,6 +41,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       paper-slider, paper-slider2 {
         width: 100%;
       }
+
+      demo-snippet {
+        --demo-snippet-demo: {
+          background: red;
+        }
+      }
+
+      .demo-container {
+        width: 100%;
+      }
+
     </style>
   </custom-style>
 
@@ -73,12 +84,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
 
           multi-slider.huge {
-            /*background: red;*/
             --single-slider-height: 20px;
           }
 
           multi-slider {
-            /*width: 100%;*/
             background: lightcyan;
             --single-slider-height: 14px;
             --single-slider-height: 7px;
@@ -89,20 +98,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </custom-style>
 
 
-      <h1>horizontal-bar</h1>
-      <horizontal-bar id="multiValue" class="transiting"></horizontal-bar>
+      <div class="demo-container">
+        <h1>horizontal-bar</h1>
+        <horizontal-bar id="multiValue" class="transiting"></horizontal-bar>
 
 
-      <h1>multi-slider</h1>
-      <!--<paper-range-slider2 tap-value-reduce step="1" value-min="10" value-max="70" max="100" min="0"></paper-range-slider2>-->
-      <multi-slider always-show-pin value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
-      <multi-slider pin value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
-      <multi-slider value-diff-min="0" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
-      <multi-slider class="huge" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+        <h1>multi-slider</h1>
+        <!--<paper-range-slider2 tap-value-reduce step="1" value-min="10" value-max="70" max="100" min="0"></paper-range-slider2>-->
+        <multi-slider always-show-pin value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+        <multi-slider pin value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+        <multi-slider value-diff-min="0" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+        <multi-slider class="huge" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
 
-      <multi-slider always-show-pin snaps step="5" max-markers="20" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
-      <multi-slider always-show-pin step="5" max-markers="20" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
-      <multi-slider disabled value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+        <multi-slider always-show-pin snaps step="5" max-markers="20" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+        <multi-slider always-show-pin step="5" max-markers="20" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+        <multi-slider disabled value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+      </div>
 
 
     </template>
