@@ -161,7 +161,11 @@ See README.md for further details.
           value="[[item.value]]"
           class$="slider-knob-[[index]]">
           <div class="knob-content" slot="knob">
-            <iron-icon icon="add"></iron-icon>
+            <dom-if if="[[item.icon]]">
+              <template>
+                <iron-icon icon="[[item.icon]]"></iron-icon>
+              </template>
+            </dom-if>
           </div>
         </slider-knob>
       </template>
