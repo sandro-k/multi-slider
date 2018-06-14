@@ -2,6 +2,9 @@
 <link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
 <link rel="import" href="../iron-range-behavior/iron-range-behavior.html">
 <link rel="import" href="../paper-behaviors/paper-inky-focus-behavior.html">
+<link rel="import" href="../polymer/lib/mixins/gesture-event-listeners.html">
+<!--<link rel="import" href="../vaadin-context-menu/src/vaadin-contextmenu-event.html">-->
+<link rel="import" href="long-press-event.html">
 
 <!-- slider-knob is a modified version of [paper-slider, v2.0.2] -->
 
@@ -35,6 +38,7 @@
 
         --calculated-slider-knob-height: var(--single-slider-height, 2px);
         --calculated-slider-knob-size: var(--slider-knob-size, 30px);
+        --calculated-slider-knob-pin-scale: var(--slider-knob-pin-scale, 1.0)
       }
 
       /* focus shows the ripple */
@@ -47,8 +51,9 @@
         width: 100%;
 
         height: calc(var(--calculated-slider-knob-size) + var(--calculated-slider-knob-height));
-        margin-left: calc((var(--calculated-slider-knob-size) / 2) + var(--calculated-slider-knob-height) / 2);
-        margin-right: calc((var(--calculated-slider-knob-size) / 2) + var(--calculated-slider-knob-height) / 2);
+
+        margin-left: calc((var(--calculated-slider-knob-size) / 2) - 2px);
+        margin-right: calc((var(--calculated-slider-knob-size) / 2) - 2px);
       }
 
       #sliderContainer:focus {
@@ -122,6 +127,7 @@
         transition-timing-function: ease;
 
         @apply --shadow-elevation-4dp;
+        @apply --slider-knob-inner;
       }
 
       .expand:not(.pin) > .slider-knob-btn > .slider-knob-inner {
@@ -132,6 +138,10 @@
       .ring > .slider-knob-btn > .slider-knob-inner {
         background-color: var(--slider-knob-start-color, transparent);
         border: 2px solid var(--slider-knob-start-border-color, var(--paper-grey-400));
+      }
+
+      :host(:focus) > .slider-knob-inner {
+
       }
 
       .slider-knob-inner::before {
@@ -164,7 +174,7 @@
 
       .pin.expand > .slider-knob-btn > .slider-knob-inner::before {
         -webkit-transform: rotate(-45deg) scale(1) translate(17px, -17px);
-        transform: rotate(-45deg) scale(1) translate(17px, -17px);
+        transform: rotate(-45deg) scale(var(--calculated-slider-knob-pin-scale)) translate(17px, -17px);
       }
 
       .pin > .slider-knob-btn > .slider-knob-inner::after {
@@ -186,7 +196,7 @@
 
       .pin.expand > .slider-knob-btn > .slider-knob-inner::after {
         -webkit-transform: scale(1) translate(0, -17px);
-        transform: scale(1) translate(0, -17px);
+        transform: scale(var(--calculated-slider-knob-pin-scale)) translate(0, -17px);
       }
 
       /* disabled state */
@@ -232,13 +242,23 @@
   </template>
 
   <script>
-    class SliderKnob extends Polymer.mixinBehaviors([Polymer.IronA11yKeysBehavior, Polymer.IronFormElementBehavior, Polymer.IronRangeBehavior], Polymer.Element) {
+    class SliderKnob extends Polymer.mixinBehaviors([
+        Polymer.IronA11yKeysBehavior,
+        Polymer.IronFormElementBehavior,
+        Polymer.IronRangeBehavior,
+        Polymer.PaperInkyFocusBehavior],
+      Polymer.Element) {
+
       static get is () {
         return 'slider-knob'
       }
 
       static get properties () {
         return {
+          color: {
+            type: String,
+          },
+
           /**
            * Used to customize the displayed value of the pin. E.g. the value can be prefixed with a '$' like '$99'
            */
@@ -320,11 +340,38 @@
         }
       }
 
+      constructor () {
+        super()
+
+        this._boundLongPress = this._onLongPress.bind(this)
+      }
+
+      ready () {
+        super.ready()
+        this._ensureAttribute('tabindex', 0)
+        this._ensureAttribute('role', 'slider')
+
+        this._listen(this.$.sliderKnob, 'long-press-event', this._boundLongPress)
+      }
+
+      _onLongPress (event){
+        this.fire('slider-knob-long-pressed', {event: event})
+      }
+
+      _listen (node, evType, handler) {
+        if (Polymer.Gestures.gestures[evType]) {
+          Polymer.Gestures.addListener(node, evType, handler)
+        } else {
+          node.addEventListener(evType, handler)
+        }
+      }
+
       static get observers () {
         return [
           '_updateKnob(value, min, max, snaps, step)',
           '_valueChanged(value)',
-          '_immediateValueChanged(immediateValue)'
+          '_immediateValueChanged(immediateValue)',
+          '_colorChanged(color)'
         ]
       }
 
@@ -337,10 +384,13 @@
         }
       }
 
-      ready () {
-        super.ready()
-        this._ensureAttribute('tabindex', 0)
-        this._ensureAttribute('role', 'slider')
+      _colorChanged (color) {
+        this.style.setProperty('--slider-knob-color', color)
+        this.style.setProperty('--slider-knob-start-color', color)
+        this.style.setProperty('--slider-knob-start-border-color', color)
+        this.style.setProperty('--slider-knob-pin-start-color', color)
+        this.style.setProperty('--slider-knob-pin-color', color)
+        // this.style.setProperty('background',  color)
       }
 
       /**
@@ -432,13 +482,13 @@
         this._maxx = this._w - this._startx
         this.$.sliderKnob.classList.add('dragging')
         this._setDragging(true)
+        this.fire('slider-knob-down')
       }
 
       _trackX (event) {
         if (!this.dragging) {
           this._trackStart(event)
         }
-
 
         let direction = this._isRTL ? -1 : 1
         let dx = Math.min(
@@ -475,6 +525,7 @@
 
         // set the focus manually because we will called prevent default
         this.focus()
+
       }
 
       _knobTransitionEnd (event) {
