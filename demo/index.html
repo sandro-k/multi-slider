@@ -88,7 +88,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
 
           multi-slider {
-            background: lightcyan;
             --single-slider-height: 14px;
             --single-slider-height: 7px;
             --paper-range-slider-width: 100%
@@ -104,7 +103,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
         <h1>multi-slider</h1>
-        <!--<paper-range-slider2 tap-value-reduce step="1" value-min="10" value-max="70" max="100" min="0"></paper-range-slider2>-->
         <multi-slider always-show-pin value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
         <multi-slider pin value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
         <multi-slider value-diff-min="0" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
@@ -113,6 +111,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <multi-slider always-show-pin snaps step="5" max-markers="20" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
         <multi-slider always-show-pin step="5" max-markers="20" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
         <multi-slider disabled value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+        <multi-slider disabled value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+
+        <h1>Min/Max</h1>
+        <multi-slider id="sliderNumber" value-diff-min="0" step="1" min="0" max="48" ></multi-slider>
+
       </div>
 
 
@@ -121,7 +124,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </div>
 
 <script>
-  let multiValueProgress, multiValueProgress2
+  let multiValueProgress, multiValueProgress2, sliderNumber
 
   window.addEventListener('WebComponentsReady', () => {
     multiValueProgress = document.querySelector('#multiValue')
@@ -134,6 +137,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       {value: 60},
       {value: 70}
     ]
+
+    sliderNumber = document.querySelector('#sliderNumber')
+    // sliderNumber.values = [{value: 8}, {value: 24}, {value: 40}]
+
+    sliderNumber.values = [{value: 8}, {value: 24}, {value: 40}, {value: 55}, {value: 77}]
+
+
   })
 </script>
 
