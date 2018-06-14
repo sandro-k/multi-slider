@@ -1,4 +1,5 @@
 <!--
+
 @license
 Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
@@ -138,7 +139,7 @@ Custom property                                  | Description                  
         background: var(--google-yellow-500);
       }
 
-      .bar-item..bar-item-0 {
+      .bar-item.bar-item-0 {
         background: var(--google-yellow-500);
       }
 
@@ -200,7 +201,9 @@ Custom property                                  | Description                  
       <dom-repeat items="[[values]]" on-rendered-item-count-changed="_domRepeat">
         <template>
           <div
+            style$="[[_valueToColorInReverse(item, index, values)]]"
             class$="bar-item bar-item-[[_calculateReversIndex(index, values)]] [[_attributeToClass(disabled, 'disabled')]]"></div>
+          <!--class$="bar-item bar-item-[[_calculateReversIndex(index, values)]] [[_attributeToClass(disabled, 'disabled')]]"></div>-->
         </template>
       </dom-repeat>
     </div>
@@ -208,7 +211,7 @@ Custom property                                  | Description                  
 </dom-module>
 
 <script>
-  class HorizontalBar extends Polymer.mixinBehaviors([Polymer.IronRangeBehavior],  Polymer.Element) {
+  class HorizontalBar extends Polymer.mixinBehaviors([Polymer.IronRangeBehavior], Polymer.Element) {
     static get is () {
       return 'horizontal-bar'
     }
@@ -246,17 +249,28 @@ Custom property                                  | Description                  
       }
     }
 
+    _valueToColorInReverse (item, index, values) {
+      let reverseIndex = this._calculateReversIndex(index, values)
+      if (values[reverseIndex] && values[reverseIndex].barColor) {
+        return `background-color: ${values[reverseIndex].barColor}`
+      }
+    }
+
     _attributeToClass (flag, className) {
       return flag ? className : ''
     }
 
     _transformProgress (progress, ratio) {
-      let transform = `scaleX(${ratio/ 100})`
-      // console.log('_transformProgress', transform, transform2)
-      progress.style.transform = progress.style.webkitTransform = transform
+      // console.log('_transformProgress', progress, ratio)
+      if (progress) {
+        let transform = `scaleX(${ratio / 100})`
+        // console.log('_transformProgress', transform, transform2)
+        progress.style.transform = progress.style.webkitTransform = transform
+      }
     }
 
     _calculateReversIndex (index, values) {
+      // console.log('_calculateReversIndex', values.length - 1 - index, index)
       return values.length - 1 - index
     }
 
@@ -266,9 +280,12 @@ Custom property                                  | Description                  
 
     _progressChanged (min, max, values, _domRepeatRendered) {
       if (this.values && this._domRepeatRendered) {
-        this.values.forEach((item, index) => {
-          let ratio = this._calcRatio(item.value) * 100
-          this._transformProgress(this.$$(`.bar-item-${index}`), ratio)
+        requestAnimationFrame(() => {
+          this.values.forEach((item, index) => {
+            let ratio = this._calcRatio(item.value) * 100
+            let el = this.$$(`.bar-item-${index}`)
+            this._transformProgress(el, ratio)
+          })
         })
       }
 
