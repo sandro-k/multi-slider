@@ -52,17 +52,7 @@ See README.md for further details.
 
         --paper-range-slider-width: 200px;
 
-        /*--paper-range-slider-lower-color: var(--paper-grey-400);*/
-        /*--paper-range-slider-active-color: var(--primary-color);*/
-        /*--paper-range-slider-higher-color: var(--paper-grey-400);*/
-        /*--paper-range-slider-knob-color: var(--primary-color);*/
-        /*--paper-range-slider-pin-color: var(--primary-color);*/
-        /*--paper-range-slider-pin-start-color: var(--paper-grey-400);*/
-        /*--paper-range-slider-knob-start-color: transparent;*/
-        /*--paper-range-slider-knob-start-border-color: var(--paper-grey-400);*/
-
-        /*height: calc(30px + var(--paper-single-range-slider-height, 2px));*/
-        height: calc(30px + var(--single-slider-height, 2px) );
+        height: calc(30px + var(--single-slider-height, 2px));
         margin-top: 1em;
         position: relative;
       }
@@ -71,13 +61,10 @@ See README.md for further details.
         @apply --layout-fit;
         width: 100%;
         pointer-events: none;
-        /*--paper-single-range-slider-height: 12px;*/
-        /*--paper-single-range-slider-height: var(--paper-single-range-slider-height, 12px);*/
         --paper-single-range-slider-active-color: transparent;
         --paper-single-range-slider-container-color: transparent;
 
         --paper-slider-height: 6px;
-        /*--single-slider-height: 6px;*/
         --slider-knob-size: 40px;
       }
 
@@ -85,51 +72,13 @@ See README.md for further details.
         @apply --layout-fit;
         @apply --layout;
         @apply --layout-center-center;
-
-        /*@apply --shadow-elevation-4dp;*/
-      }
-
-      slider-knob.slider-knob-0 {
-        --slider-knob-color: var(--google-yellow-500);
-        --slider-knob-start-color: var(--google-yellow-500);
-        --slider-knob-start-border-color: var(--google-yellow-500);
-        --slider-knob-pin-start-color: var(--google-yellow-500);
-
-        --slider-knob-disabled-knob-color: var(--google-yellow-100);
-        /*--paper-single-range-slider-disabled-active-color: var(--google-yellow-100);*/
-        /*--paper-single-range-slider-disabled-active-color: magenta;*/
-
-        --slider-knob-pin-color: var(--google-yellow-500);
-      }
-
-      slider-knob.slider-knob-1 {
-        --slider-knob-color: var(--google-red-500);
-        --slider-knob-start-border-color: var(--google-red-500);
-        --slider-knob-pin-color: var(--google-red-500);
-        --slider-knob-pin-start-color: var(--google-red-500);
-
-        --slider-knob-disabled-knob-color: var(--google-red-100);
-      }
-
-      slider-knob.slider-knob-2 {
-        --slider-knob-color: var(--google-blue-500);
-        --slider-knob-start-border-color: var(--google-blue-500);
-        --slider-knob-pin-color: var(--google-blue-500);
-        --slider-knob-pin-start-color: var(--google-blue-500);
-
-        --slider-knob-disabled-knob-color: var(--google-blue-100);
       }
 
       horizontal-bar {
         width: auto;
-        /*--horizontal-bar-height: 10px;*/
         --horizontal-bar-height: var(--single-slider-height, 2px);
         margin-left: calc(15px + var(--single-slider-height, 2px) / 2);
         margin-right: calc(15px + var(--single-slider-height, 2px) / 2);
-        /*margin-left: calc(15px + 10px / 2);*/
-        /*margin-right: calc(15px + 10px / 2);*/
-        /*margin-left: calc(15px + var(--paper-single-range-slider-height) / 2);*/
-        /*margin-right: calc(15px + var(--paper-single-range-slider-height) / 2);*/
 
         justify-content: center;
         display: flex;
@@ -137,12 +86,19 @@ See README.md for further details.
         flex-direction: column;
         align-content: center;
         @apply --layout-fit;
+
       }
+
+      iron-icon {
+        color: #ffffff;
+      }
+
     </style>
 
-    <horizontal-bar disabled="[[disabled]]" id="multiValue" min="[[min]]" max="[[max]]" values="[[values]]" class="transiting"></horizontal-bar>
+    <horizontal-bar disabled="[[disabled]]" id="multiValue" min="[[min]]" max="[[max]]" values="[[values]]"
+                    class="transiting"></horizontal-bar>
 
-    <dom-repeat id="slider" items="[[values]]">
+    <dom-repeat id="slider" items="[[values]]" on-rendered-item-count-changed="_sliderCountChanged">
       <template>
         <slider-knob
           display-function="[[displayFunction]]"
@@ -157,8 +113,10 @@ See README.md for further details.
 
           pin="[[pin]]"
           snaps="[[snaps]]"
+          on-click="_onSliderKnobClicked"
 
           value="[[item.value]]"
+          color="[[item.iconColor]]"
           class$="slider-knob-[[index]]">
           <div class="knob-content" slot="knob">
             <dom-if if="[[item.icon]]">
@@ -193,6 +151,10 @@ See README.md for further details.
                 return value
               }
             }
+          },
+
+          containerColor: {
+            type: String
           },
 
           /**
@@ -321,24 +283,30 @@ See README.md for further details.
 
           values: {
             type: Array,
-            value: function () {
-              return [
-                {value: 10},
-                {value: 20},
-                {value: 70}
-              ]
-            }
+            notify: true
           }
         }
       }
 
-      // -----------------------------------------------------------------------------------------------------------
-      // Multi range slider
-      // -----------------------------------------------------------------------------------------------------------
+      static get observers () {
+        return [
+          '_containerColorChanged(containerColor)'
+        ]
+      }
 
-      // -----------------------------------------------------------------------------------------------------------
-      // Multi range slider
-      // -----------------------------------------------------------------------------------------------------------
+      _onSliderKnobClicked (event) {
+        event.stopPropagation()
+      }
+
+      _sliderCountChanged (event) {
+        requestAnimationFrame(() => {
+          this.init()
+        })
+      }
+
+      _containerColorChanged (color) {
+        this.style.setProperty('--horizontal-bar-container-color', color)
+      }
 
       // -----------------------------------------------------------------------------------------------------------
       // initial settings
@@ -348,6 +316,14 @@ See README.md for further details.
         requestAnimationFrame(() => {
           this.init()
         })
+      }
+
+      getFocusedSlider () {
+        let sliderElement = this.shadowRoot.querySelector('slider-knob[focused]')
+        if (sliderElement) {
+          let sliderModel = this.$.slider.modelForElement(sliderElement).item
+          return {element: sliderElement, model: sliderModel, index: this.values.indexOf(sliderModel)}
+        }
       }
 
       _indexHasLeftSlider (index) {
@@ -394,6 +370,7 @@ See README.md for further details.
 
       _setSliderValue (index, value) {
         this.set(`values.${index}.value`, value)
+        this.dispatchEvent(new CustomEvent('multi-slider-value-changed', {detail: {value, index}}))
       }
 
       _setValueForIndex (index, value) {
@@ -427,6 +404,8 @@ See README.md for further details.
 
         // set the value within the range back to the slider
         event.target.set('value', value)
+
+        this.dispatchEvent(new CustomEvent('multi-slider-value-changed', {detail: {value, index}}))
 
         if (this.alwaysShowPin) {
           event.target._expandKnob()
@@ -515,8 +494,6 @@ See README.md for further details.
       setDisabled (isDisabled) {
         this.disabled = this._toBool(isDisabled)
         let pointEvt = this.disabled ? 'none' : 'auto'
-
-        // console.log('setDisabled', this.$.slider)
 
         this.getAllSlider().forEach((el) => {
           el.getEle('#sliderKnob').style.pointerEvents = pointEvt
