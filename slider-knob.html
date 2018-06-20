@@ -3,7 +3,6 @@
 <link rel="import" href="../iron-range-behavior/iron-range-behavior.html">
 <link rel="import" href="../paper-behaviors/paper-inky-focus-behavior.html">
 <link rel="import" href="../polymer/lib/mixins/gesture-event-listeners.html">
-<!--<link rel="import" href="../vaadin-context-menu/src/vaadin-contextmenu-event.html">-->
 <link rel="import" href="long-press-event.html">
 
 <!-- slider-knob is a modified version of [paper-slider, v2.0.2] -->
@@ -140,9 +139,7 @@
         border: 2px solid var(--slider-knob-start-border-color, var(--paper-grey-400));
       }
 
-      :host(:focus) > .slider-knob-inner {
-
-      }
+      :host(:focus) > .slider-knob-inner {}
 
       .slider-knob-inner::before {
         background-color: var(--slider-knob-pin-color, var(--google-blue-700));
@@ -231,6 +228,7 @@
            class="slider-knob-btn"
            on-down="_knobdown"
            on-up="_resetKnob"
+           ondblclick="[[_boundLongPress]]"
            on-track="_onTrack"
            on-transitionend="_knobTransitionEnd">
         <div class="slider-knob-inner" value$="[[displayFunction(immediateValue)]]">
@@ -255,6 +253,7 @@
 
       static get properties () {
         return {
+
           color: {
             type: String,
           },
@@ -336,7 +335,6 @@
             value: false,
             readOnly: true
           },
-
         }
       }
 
