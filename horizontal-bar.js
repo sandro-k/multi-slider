@@ -69,10 +69,12 @@ class HorizontalBar extends Polymer.mixinBehaviors([Polymer.IronRangeBehavior], 
 
   _renderAll () {
     requestAnimationFrame(() => {
-      this.values.forEach((item, index) => {
-        this._renderValue(index, item.value)
-        this._setBackgroundColor(index, item.barColor)
-      })
+      if(this.values){
+        this.values.forEach((item, index) => {
+          this._renderValue(index, item.value)
+          this._setBackgroundColor(index, item.barColor)
+        })
+      }
     })
   }
 
