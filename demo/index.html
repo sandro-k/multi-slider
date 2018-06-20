@@ -64,33 +64,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <template>
       <custom-style>
         <style is="custom-style">
-          horizontal-bar.blue {
-            --horizontal-bar-active-color: var(--paper-light-blue-500);
-            --horizontal-bar-secondary-color: red;
-          }
-
-          horizontal-bar.red {
-            --horizontal-bar-active-color: var(--paper-red-500);
-            --horizontal-bar-secondary-color: var(--paper-red-100);
-          }
-
-          horizontal-bar.green {
-            --horizontal-bar-active-color: var(--paper-light-green-500);
-            --horizontal-bar-secondary-color: var(--paper-light-green-100);
-          }
-
           horizontal-bar {
             --horizontal-bar-height: 10px;
+            --bar-color-1: #db4437;
+            --bar-color-2: #f7cb4d;
+            --bar-color-3: #57bb8a;
           }
 
           multi-slider.huge {
             --single-slider-height: 20px;
           }
 
+          multi-slider[pin], multi-slider[always-show-pin]{
+            margin-top: 38px;
+          }
+
           multi-slider {
             --single-slider-height: 14px;
             --single-slider-height: 7px;
-            --paper-range-slider-width: 100%
+            --paper-range-slider-width: 100%;
+            --bar-color-1: #db4437;
+            --bar-color-2: #f7cb4d;
+            --bar-color-3: #57bb8a;
+            --horizontal-bar-container-color: #7baaf7;
           }
 
         </style>
@@ -99,22 +95,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <div class="demo-container">
         <h1>horizontal-bar</h1>
-        <horizontal-bar id="multiValue" class="transiting"></horizontal-bar>
+        <horizontal-bar id="multiValue" min="0" max="100" class="transiting"></horizontal-bar>
 
 
         <h1>multi-slider</h1>
-        <multi-slider always-show-pin value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
-        <multi-slider pin value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
-        <multi-slider value-diff-min="0" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
-        <multi-slider class="huge" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+        <multi-slider pin value-diff-min="5" step="1" value-min="10" value-max="70" max="100"
+                      min="0"></multi-slider>
+        <multi-slider class="huge" value-diff-min="5" step="1" value-min="10" value-max="70" max="100"
+                      min="0"></multi-slider>
 
-        <multi-slider always-show-pin snaps step="5" max-markers="20" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
-        <multi-slider always-show-pin step="5" max-markers="20" value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
-        <multi-slider disabled value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
-        <multi-slider disabled value-diff-min="5" step="1" value-min="10" value-max="70" max="100" min="0"></multi-slider>
+        <multi-slider disabled value-diff-min="5" step="1" value-min="10" value-max="70" max="100"
+                      min="0"></multi-slider>
 
         <h1>Min/Max</h1>
-        <multi-slider id="sliderNumber" always-show-pin value-diff-min="0" step="1" min="0" max="48" ></multi-slider>
+        <multi-slider id="sliderNumber" always-show-pin value-diff-min="0" step="1" min="0" max="88"></multi-slider>
 
       </div>
 
@@ -127,23 +121,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   let multiValueProgress, multiValueProgress2, sliderNumber
 
   window.addEventListener('WebComponentsReady', () => {
+
     multiValueProgress = document.querySelector('#multiValue')
     multiValueProgress.values = [
-      {value: 10},
-      {value: 20},
-      {value: 30},
-      {value: 40},
-      {value: 50},
-      {value: 60},
-      {value: 70}
+      {value: 10, barColor: 'var(--bar-color-1)'},
+      {value: 20, barColor: 'var(--bar-color-2)'},
+      {value: 30, barColor: 'var(--bar-color-3)'},
+      {value: 40, barColor: 'var(--bar-color-1)'},
+      {value: 50, barColor: 'var(--bar-color-2)'},
+      {value: 60, barColor: 'var(--bar-color-3)'},
+      {value: 70, barColor: 'var(--bar-color-1)'},
+      {value: 80, barColor: 'var(--bar-color-2)'},
+      {value: 90, barColor: 'var(--bar-color-3)'},
+      {value: 100, barColor: 'var(--bar-color-1)'}
     ]
 
-    sliderNumber = document.querySelector('#sliderNumber')
-    // sliderNumber.values = [{value: 8}, {value: 24}, {value: 40}]
+    document.querySelector('#sliderNumber')
 
-    sliderNumber.values = [{value: 8}, {value: 24}, {value: 40}, {value: 55}, {value: 77}]
+    Array.from(document.querySelectorAll('multi-slider')).forEach((slider) => {
+      slider.values = [
+        {value: 8, barColor: 'var(--bar-color-1)', iconColor: 'var(--bar-color-1)'},
+        {value: 24, barColor: "var(--bar-color-2)", iconColor: 'var(--bar-color-2)'},
+        {value: 40, barColor: "var(--bar-color-3)", iconColor: 'var(--bar-color-3)'},
+        {value: 55, barColor: "var(--bar-color-1)", iconColor: 'var(--bar-color-1)'},
+        {value: 77, barColor: "var(--bar-color-2)", iconColor: 'var(--bar-color-2)'}
+      ]
+    })
 
-
+    // sliderNumber.values = [
+    //   {value: 8, barColor: 'var(--bar-color-1)', iconColor: 'var(--bar-color-1)'},
+    //   {value: 24, barColor: "var(--bar-color-2)", iconColor: 'var(--bar-color-2)'},
+    //   {value: 40, barColor: "var(--bar-color-3)", iconColor: 'var(--bar-color-3)'},
+    //   {value: 55, barColor: "var(--bar-color-1)", iconColor: 'var(--bar-color-1)'},
+    //   {value: 77, barColor: "var(--bar-color-2)", iconColor: 'var(--bar-color-2)'}
+    // ]
   })
 </script>
 
