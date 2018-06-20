@@ -132,6 +132,10 @@ Custom property                                  | Description                  
 
       :host([disabled]) .bar-item {
         background: var(--horizontal-bar-disabled-secondary-color, var(--google-grey-300));
+
+        opacity: 0.5;
+        -webkit-filter: grayscale(50%); /* Safari 6.0 - 9.0 */
+        filter: grayscale(50%);
       }
     </style>
 
