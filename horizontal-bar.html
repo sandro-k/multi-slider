@@ -1,5 +1,9 @@
 <!--
+@license
+Copyright (c) 2018 Sandro Kock <sandro.kock@gmail.com>
+-->
 
+<!--
 @license
 Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
@@ -72,9 +76,8 @@ Custom property                                  | Description                  
 `--horizontal-bar-disabled-secondary-color`      | The color of the secondary bar if disabled  | `--google-grey-300`
 `--horizontal-bar-height`                        | The height of the progress bar              | `4px`
 
-@group Paper Elements
+@group MultiSlider
 @element horizontal-bar
-@hero hero.svg
 @demo demo/index.html
 -->
 
@@ -83,7 +86,6 @@ Custom property                                  | Description                  
     <style>
       :host {
         display: block;
-        width: 200px;
         position: relative;
         overflow: hidden;
       }
@@ -99,9 +101,6 @@ Custom property                                  | Description                  
 
       #progressContainer {
         height: var(--horizontal-bar-height, 4px);
-      }
-
-      #progressContainer {
         background: var(--horizontal-bar-container-color, var(--google-grey-300));
       }
 
@@ -134,76 +133,12 @@ Custom property                                  | Description                  
       :host([disabled]) .bar-item {
         background: var(--horizontal-bar-disabled-secondary-color, var(--google-grey-300));
       }
-
-      .bar-item {
-        background: var(--google-yellow-500);
-      }
-
-      .bar-item.bar-item-0 {
-        background: var(--google-yellow-500);
-      }
-
-      .bar-item.bar-item-0.disabled {
-        background: var(--google-yellow-100);
-      }
-
-      .bar-item.bar-item-1 {
-        background: var(--google-red-500);
-      }
-
-      .bar-item.bar-item-1.disabled {
-        background: var(--google-red-100);
-      }
-
-      .bar-item.bar-item-2 {
-        background: var(--google-blue-500);
-      }
-
-      .bar-item.bar-item-2.disabled {
-        background: var(--google-blue-100);
-      }
-
-      .bar-item.bar-item-3 {
-        background: var(--google-green-500);
-      }
-
-      .bar-item.bar-item-3.disabled {
-        background: var(--google-green-100);
-      }
-
-      .bar-item.bar-item-4 {
-        background: var(--paper-pink-500);
-      }
-
-      .bar-item.bar-item-4.disabled {
-        background: var(--paper-pink-100);
-      }
-
-      .bar-item.bar-item-5 {
-        background: var(--paper-purple-500);
-      }
-
-      .bar-item.bar-item-5.disabled {
-        background: var(--paper-purple-100);
-      }
-
-      .bar-item.bar-item-6 {
-        background: var(--paper-indigo-500);
-      }
-
-      .bar-item.bar-item-6.disabled {
-        background: var(--paper-indigo-100);
-      }
-
     </style>
 
     <div id="progressContainer">
       <dom-repeat items="[[values]]" on-rendered-item-count-changed="_domRepeat">
         <template>
-          <div
-            style$="[[_valueToColorInReverse(item, index, values)]]"
-            class$="bar-item bar-item-[[_calculateReversIndex(index, values)]] [[_attributeToClass(disabled, 'disabled')]]"></div>
-          <!--class$="bar-item bar-item-[[_calculateReversIndex(index, values)]] [[_attributeToClass(disabled, 'disabled')]]"></div>-->
+          <div class$="bar-item bar-item-[[_calculateReversIndex(index, values)]] [[_attributeToClass(disabled, 'disabled')]]"></div>
         </template>
       </dom-repeat>
     </div>
@@ -240,7 +175,12 @@ Custom property                                  | Description                  
     }
 
     static get observers () {
-      return ['_progressChanged(min, max, values.*, _domRepeatRendered)']
+      return [
+        '_progressChanged(values.*, _domRepeatRendered)',
+        '_valuesLengthChanged(values.splices)',
+        '_minChanged(min)',
+        '_minChanged(max)',
+      ]
     }
 
     static get hostAttributes () {
@@ -249,11 +189,9 @@ Custom property                                  | Description                  
       }
     }
 
-    _valueToColorInReverse (item, index, values) {
-      let reverseIndex = this._calculateReversIndex(index, values)
-      if (values[reverseIndex] && values[reverseIndex].barColor) {
-        return `background-color: ${values[reverseIndex].barColor}`
-      }
+    constructor () {
+      super()
+      this.__firstRender = false
     }
 
     _attributeToClass (flag, className) {
@@ -261,16 +199,15 @@ Custom property                                  | Description                  
     }
 
     _transformProgress (progress, ratio) {
-      // console.log('_transformProgress', progress, ratio)
       if (progress) {
+        // TODO(SKO) prev if translateX and scale would make sense together so that elements don't overlap eg. paint
+        // effects on Edge
         let transform = `scaleX(${ratio / 100})`
-        // console.log('_transformProgress', transform, transform2)
         progress.style.transform = progress.style.webkitTransform = transform
       }
     }
 
     _calculateReversIndex (index, values) {
-      // console.log('_calculateReversIndex', values.length - 1 - index, index)
       return values.length - 1 - index
     }
 
@@ -278,18 +215,48 @@ Custom property                                  | Description                  
       this._domRepeatRendered = true
     }
 
-    _progressChanged (min, max, values, _domRepeatRendered) {
-      if (this.values && this._domRepeatRendered) {
-        requestAnimationFrame(() => {
-          this.values.forEach((item, index) => {
-            let ratio = this._calcRatio(item.value) * 100
-            let el = this.$$(`.bar-item-${index}`)
-            this._transformProgress(el, ratio)
-          })
+    _renderAll () {
+      requestAnimationFrame(() => {
+        this.values.forEach((item, index) => {
+          this._renderValue(index, item.value)
+          this._setBackgroundColor(index, item.barColor)
         })
-      }
+      })
+    }
 
+    _renderValue (index, value) {
+      let ratio = this._calcRatio(value) * 100
+      let el = this.$$(`.bar-item-${index}`)
+      this._transformProgress(el, ratio)
+    }
+
+    _setBackgroundColor (index, color) {
+      let el = this.$$(`.bar-item-${index}`)
+      if (el.style.backgroundColor !== color){
+        el.style.backgroundColor = color
+      }
+    }
+
+    _valuesLengthChanged (event) {
+      this._renderAll()
+    }
+
+    _progressChanged (path, _domRepeatRendered) {
+      if (path.path.indexOf('.') > -1) {
+        if (this.values && this._domRepeatRendered) {
+          this._renderValue(path.path.split('.')[1], path.value)
+        }
+      } else if (!this.__firstRender) {
+        this.__firstRender = true
+        this._renderAll()
+      }
+    }
+
+    _minChanged(min) {
       this.setAttribute('aria-valuemin', min)
+    }
+
+    _maxChanged(max) {
       this.setAttribute('aria-valuemax', max)
     }
 
