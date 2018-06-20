@@ -110,7 +110,7 @@ class SliderKnob extends Polymer.mixinBehaviors([
     this._listen(this.$.sliderKnob, 'long-press-event', this._boundLongPress)
   }
 
-  _onLongPress (event){
+  _onLongPress (event) {
     this.fire('slider-knob-long-pressed', {event: event})
   }
 
@@ -387,7 +387,9 @@ class SliderKnob extends Polymer.mixinBehaviors([
     }
   }
 
-  getEle (tag) { return this.shadowRoot.querySelector(tag) }
+  getEle (tag) {
+    return this.shadowRoot.querySelector(tag)
+  }
 
   /**
    * Fired when the slider-knob's value changes.
