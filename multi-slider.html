@@ -44,13 +44,21 @@ See README.md for further details.
 <dom-module id="multi-slider">
   <template>
     <style>
-      /* local styles go here */
       :host {
         @apply --layout;
         @apply --layout-justified;
         @apply --layout-center;
 
         --paper-range-slider-width: 200px;
+
+        /*--paper-range-slider-lower-color: var(--paper-grey-400);*/
+        /*--paper-range-slider-active-color: var(--primary-color);*/
+        /*--paper-range-slider-higher-color: var(--paper-grey-400);*/
+        /*--paper-range-slider-knob-color: var(--primary-color);*/
+        /*--paper-range-slider-pin-color: var(--primary-color);*/
+        /*--paper-range-slider-pin-start-color: var(--paper-grey-400);*/
+        /*--paper-range-slider-knob-start-color: transparent;*/
+        /*--paper-range-slider-knob-start-border-color: var(--paper-grey-400);*/
 
         height: calc(30px + var(--single-slider-height, 2px));
         margin-top: 1em;
@@ -72,6 +80,7 @@ See README.md for further details.
         @apply --layout-fit;
         @apply --layout;
         @apply --layout-center-center;
+
       }
 
       horizontal-bar {
@@ -91,6 +100,8 @@ See README.md for further details.
 
       iron-icon {
         color: #ffffff;
+        --iron-icon-height: 18px;
+        --iron-icon-width: 18px;
       }
 
     </style>
@@ -504,9 +515,3 @@ See README.md for further details.
     customElements.define(MultiSlider.is, MultiSlider)
   </script>
 </dom-module>
-
-
-
-
-
-
